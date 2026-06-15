@@ -6,6 +6,7 @@
 #include "builtin.h"
 #include "executor.h"
 #include "history.h"
+#include "input.h"
 
 int main()
 {
@@ -20,9 +21,9 @@ int main()
         char *args[100];
 
         printf("shivam-shell> ");
+        fflush(stdout);
 
-        if (fgets(input, sizeof(input), stdin) == NULL)
-            break;
+        read_input(input);
 
         add_history(input);
 
