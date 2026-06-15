@@ -5,6 +5,7 @@ A Unix-like shell built in C from scratch to explore process management, pipes, 
 ## Features
 
 ### Command Execution
+
 - Execute external commands using fork() and execvp()
 - Built-in commands:
   - cd
@@ -12,81 +13,93 @@ A Unix-like shell built in C from scratch to explore process management, pipes, 
   - history
 
 ### I/O Redirection
+
 - Output redirection
 
-bash echo hello > file.txt 
+bash echo hello > file.txt
 
 - Append redirection
 
-bash echo hello >> file.txt 
+bash echo hello >> file.txt
 
 - Input redirection
 
-bash wc < file.txt 
+bash wc < file.txt
 
 ### Pipes
+
 - Single pipe
 
-bash cat file.txt | wc 
+bash cat file.txt | wc
 
 - Multiple pipes
 
-bash cat file.txt | grep hello | wc 
+bash cat file.txt | grep hello | wc
 
 ### Background Processes
+
 Run commands in the background using &
 
-bash sleep 30 & 
+bash sleep 30 &
 
 ### Process Management
+
 - Fork-based process execution
 - Zombie process cleanup using waitpid(..., WNOHANG)
 - Signal handling for Ctrl + C
 
 ### Command History
+
 - Stores command history during shell execution
 - View history using:
 
-bash history 
+bash history
 
 ### Interactive Line Editor
+
 Implemented without GNU Readline.
 
 #### Cursor Navigation
+
 - Left Arrow
 - Right Arrow
 
 #### History Navigation
+
 - Up Arrow
 - Down Arrow
 
 #### Editing Support
+
 - Mid-line insertion
 - Mid-line deletion (Backspace)
 
 #### Keyboard Shortcuts
-| Shortcut | Action |
-|-----------|----------|
+
+| Shortcut | Action                    |
+| -------- | ------------------------- |
 | Ctrl + A | Move to beginning of line |
-| Ctrl + E | Move to end of line |
-| Ctrl + L | Clear screen |
-| Ctrl + U | Delete entire line |
+| Ctrl + E | Move to end of line       |
+| Ctrl + L | Clear screen              |
+| Ctrl + U | Delete entire line        |
 
 ### TAB Completion
+
 - File completion
 - Directory completion
 - Multiple match suggestions
 
 Examples:
 
-bash cat te<TAB> 
+bash cat te<TAB>
 
-bash cd Doc<TAB> 
+bash cd Doc<TAB>
 
 ---
 
 ## Architecture
 
+```text
 User Input
     |
     v
@@ -107,8 +120,15 @@ execute_command()
     +---- Background Execution
     |
     +---- Process Management
-### Project Structure
+```
 
+## Architecture
+
+![Architecture](architecture.png.jpeg)
+
+## Project Structure
+
+```text
 .
 ├── main.c
 ├── parser.c
@@ -124,30 +144,37 @@ execute_command()
 ├── line_editor.c
 ├── Makefile
 └── README.md
+```
+
 ---
 
 ## Key Concepts Learned
 
 ### Process Management
+
 - fork()
 - execvp()
 - waitpid()
 
 ### Inter-Process Communication
+
 - pipe()
 - dup2()
 
 ### Signal Handling
+
 - SIGINT
 - Background processes
 - Zombie process cleanup
 
 ### Terminal Programming
+
 - Raw terminal mode using termios
 - Escape sequences
 - Interactive line editing
 
 ### File Handling
+
 - open()
 - close()
 - O_RDONLY
@@ -159,18 +186,19 @@ execute_command()
 
 ## Build
 
-bash make 
+bash make
 
 ---
 
 ## Run
 
-bash ./shell 
+bash ./shell
 
 ---
 
 ## Example Session
 
+```bash
 shivam-shell> pwd
 /home/shivam
 
@@ -191,7 +219,7 @@ shivam-shell> history
 3 cat test.txt
 4 cat test.txt | wc
 5 sleep 10 &
----
+```
 
 ## Future Enhancements
 
