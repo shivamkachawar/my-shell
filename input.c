@@ -20,6 +20,7 @@ void read_input(char *input)
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     int pos = 0;
+    int cursor_pos = 0;
     char c;
     static int history_index = -1;
 
@@ -86,12 +87,31 @@ void read_input(char *input)
                     fflush(stdout);
                 }
             }
+            else if (seq[0] == '[' && seq[1] == 'D')
+            {
+                if (cursor_pos > 0)
+                {
+                    write(STDOUT_FILENO, "\033[D", 3);
+
+                    cursor_pos--;
+                }
+            }
+            else if (seq[0] == '[' && seq[1] == 'C')
+            {
+                if (cursor_pos < pos)
+                {
+                    write(STDOUT_FILENO, "\033[C", 3);
+
+                    cursor_pos++;
+                }
+            }
 
             continue;
         }
 
         if (c == '\n')
         {
+            history_index = -1;
             write(STDOUT_FILENO, "\n", 1);
             break;
         }
@@ -155,12 +175,14 @@ void read_input(char *input)
                     sprintf(&input[start], "%s/", first_match);
 
                     pos = start + strlen(first_match) + 1;
+                    cursor_pos = pos;
                 }
                 else
                 {
                     strcpy(&input[start], first_match);
 
                     pos = start + strlen(first_match);
+                    cursor_pos = pos;
                 }
 
                 printf("\r");
@@ -196,19 +218,50 @@ void read_input(char *input)
 
         if (c == 127)
         {
-            if (pos > 0)
+            if (cursor_pos > 0)
             {
-                pos--;
+                for (int i = cursor_pos - 1; i < pos; i++)
+                {
+                    input[i] = input[i + 1];
+                }
 
-                write(STDOUT_FILENO, "\b \b", 3);
+                pos--;
+                cursor_pos--;
+
+                printf("\33[2K\r");
+                printf("shivam-shell> %s", input);
+                fflush(stdout);
+
+                int move_left = pos - cursor_pos;
+
+                for (int i = 0; i < move_left; i++)
+                {
+                    write(STDOUT_FILENO, "\033[D", 3);
+                }
             }
 
             continue;
         }
 
-        input[pos++] = c;
+        for (int i = pos; i >= cursor_pos; i--)
+        {
+            input[i + 1] = input[i];
+        }
 
-        write(STDOUT_FILENO, &c, 1);
+        input[cursor_pos] = c;
+
+        pos++;
+        cursor_pos++;
+
+        printf("\33[2K\r");
+        printf("shivam-shell> %s", input);
+        fflush(stdout);
+        int move_left = pos - cursor_pos;
+
+        for (int i = 0; i < move_left; i++)
+        {
+            write(STDOUT_FILENO, "\033[D", 3);
+        }
     }
 
     input[pos] = '\0';
