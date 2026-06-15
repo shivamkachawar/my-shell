@@ -87,12 +87,43 @@ bash cd Doc<TAB>
 
 ## Architecture
 
-User Input     |     v read_input()     |     v parse_input()     |     v execute_command()     |     +---- Built-in Commands     |     +---- Redirection     |     +---- Pipes     |     +---- Background Execution     |     +---- Process Management
-
+User Input
+    |
+    v
+read_input()
+    |
+    v
+parse_input()
+    |
+    v
+execute_command()
+    |
+    +---- Built-in Commands
+    |
+    +---- Redirection
+    |
+    +---- Pipes
+    |
+    +---- Background Execution
+    |
+    +---- Process Management
 ### Project Structure
 
-. ├── main.c ├── parser.c ├── builtin.c ├── executor.c ├── process.c ├── pipe.c ├── redirection.c ├── history.c ├── input.c ├── autocomplete.c ├── history_navigation.c ├── line_editor.c ├── Makefile
-
+.
+├── main.c
+├── parser.c
+├── builtin.c
+├── executor.c
+├── process.c
+├── pipe.c
+├── redirection.c
+├── history.c
+├── input.c
+├── autocomplete.c
+├── history_navigation.c
+├── line_editor.c
+├── Makefile
+└── README.md
 ---
 
 ## Key Concepts Learned
@@ -140,8 +171,26 @@ bash ./shell
 
 ## Example Session
 
-bash shivam-shell> pwd /home/shivam  shivam-shell> echo hello > test.txt  shivam-shell> cat test.txt hello  shivam-shell> cat test.txt | wc 1 1 6  shivam-shell> sleep 10 & [Background] PID : 12345  shivam-shell> history 1 pwd 2 echo hello > test.txt 3 cat test.txt 4 cat test.txt | wc 5 sleep 10 & 
+shivam-shell> pwd
+/home/shivam
 
+shivam-shell> echo hello > test.txt
+
+shivam-shell> cat test.txt
+hello
+
+shivam-shell> cat test.txt | wc
+1 1 6
+
+shivam-shell> sleep 10 &
+[Background] PID : 12345
+
+shivam-shell> history
+1 pwd
+2 echo hello > test.txt
+3 cat test.txt
+4 cat test.txt | wc
+5 sleep 10 &
 ---
 
 ## Future Enhancements
