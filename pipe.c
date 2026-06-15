@@ -21,69 +21,110 @@ int has_pipe(char **args)
 
 void execute_pipe(char **args)
 {
-    int pipe_index = has_pipe(args);
+    int count_pipes(char **args);
+    int num_pipes = count_pipes(args);
+    int num_commands = num_pipes + 1;
 
-    char *left_args[100];
-    char *right_args[100];
+    char *commands[10][100];
 
-    int left_idx = 0;
-    int right_idx = 0;
+    int cmd_idx = 0;
+    int arg_idx = 0;
 
-    for (int i = 0; i < pipe_index; i++)
+    // Split commands
+    for (int i = 0; args[i] != NULL; i++)
     {
-        left_args[left_idx++] = args[i];
-    }
-    left_args[left_idx] = NULL;
-
-    for (int i = pipe_index + 1; args[i] != NULL; i++)
-    {
-        right_args[right_idx++] = args[i];
-    }
-    right_args[right_idx] = NULL;
-
-    int fd[2];
-
-    if (pipe(fd) < 0)
-    {
-        perror("pipe");
-        return;
+        if (strcmp(args[i], "|") == 0)
+        {
+            commands[cmd_idx][arg_idx] = NULL;
+            cmd_idx++;
+            arg_idx = 0;
+        }
+        else
+        {
+            commands[cmd_idx][arg_idx++] = args[i];
+        }
     }
 
-    pid_t pid1 = fork();
+    commands[cmd_idx][arg_idx] = NULL;
 
-    if (pid1 == 0)
+    // Create pipes
+    int pipes[num_pipes][2];
+
+    for (int i = 0; i < num_pipes; i++)
     {
-        close(fd[0]);
-
-        dup2(fd[1], STDOUT_FILENO);
-
-        close(fd[1]);
-
-        execvp(left_args[0], left_args);
-
-        perror("execvp");
-        exit(1);
+        if (pipe(pipes[i]) < 0)
+        {
+            perror("pipe");
+            return;
+        }
     }
 
-    pid_t pid2 = fork();
+    pid_t pids[num_commands];
 
-    if (pid2 == 0)
+    // Create all processes
+    for (int i = 0; i < num_commands; i++)
     {
-        close(fd[1]);
+        pids[i] = fork();
 
-        dup2(fd[0], STDIN_FILENO);
+        if (pids[i] == 0)
+        {
+            // First command
+            if (i == 0)
+            {
+                dup2(pipes[i][1], STDOUT_FILENO);
+            }
 
-        close(fd[0]);
+            // Last command
+            else if (i == num_commands - 1)
+            {
+                dup2(pipes[i - 1][0], STDIN_FILENO);
+            }
 
-        execvp(right_args[0], right_args);
+            // Middle command
+            else
+            {
+                dup2(pipes[i - 1][0], STDIN_FILENO);
+                dup2(pipes[i][1], STDOUT_FILENO);
+            }
 
-        perror("execvp");
-        exit(1);
+            // Close all pipe FDs
+            for (int j = 0; j < num_pipes; j++)
+            {
+                close(pipes[j][0]);
+                close(pipes[j][1]);
+            }
+
+            execvp(commands[i][0], commands[i]);
+
+            perror("execvp");
+            exit(1);
+        }
     }
 
-    close(fd[0]);
-    close(fd[1]);
+    // Parent closes all pipes
+    for (int i = 0; i < num_pipes; i++)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
 
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, NULL, 0);
+    // Wait for all children
+    for (int i = 0; i < num_commands; i++)
+    {
+        waitpid(pids[i], NULL, 0);
+    }
+}
+int count_pipes(char **args)
+{
+    int count = 0;
+
+    for (int i = 0; args[i] != NULL; i++)
+    {
+        if (strcmp(args[i], "|") == 0)
+        {
+            count++;
+        }
+    }
+
+    return count;
 }
