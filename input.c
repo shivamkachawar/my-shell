@@ -27,7 +27,49 @@ void read_input(char *input)
     while (1)
     {
         read(STDIN_FILENO, &c, 1);
+        if (c == 1) // Ctrl+A (Go to start of line)
+        {
+            while (cursor_pos > 0)
+            {
+                write(STDOUT_FILENO, "\033[D", 3);
+                cursor_pos--;
+            }
 
+            continue;
+        }
+        if (c == 5) // Ctrl + E (Go to end of line)
+        {
+            while (cursor_pos < pos)
+            {
+                write(STDOUT_FILENO, "\033[C", 3);
+                cursor_pos++;
+            }
+
+            continue;
+        }
+        if (c == 12) // Ctrl + L (Clear screen)
+        {
+            printf("\033[2J\033[H");
+            printf("shivam-shell> %s", input);
+
+            fflush(stdout);
+
+            continue;
+        }
+        if (c == 21) // Ctrl + U (Delete entire line)
+        {
+            input[0] = '\0';
+
+            pos = 0;
+            cursor_pos = 0;
+
+            printf("\33[2K\r");
+            printf("shivam-shell> ");
+
+            fflush(stdout);
+
+            continue;
+        }
         if (c == 27)
         {
             char seq[2];
