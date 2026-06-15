@@ -12,8 +12,18 @@ void add_history(char *cmd)
 
 void print_history()
 {
-    for(int i = 0; i < history_count; i++)
+    for (int i = 0; i < history_count; i++)
     {
         printf("%d %s", i + 1, history[i]);
     }
+}
+
+char *get_history(int index)
+{
+    return history[index];
+}
+
+int get_history_count()
+{
+    return history_count;
 }
