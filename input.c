@@ -171,9 +171,7 @@ void read_input(char *input)
         {
             if (cursor_pos > 0)
             {
-                for (int i = cursor_pos - 1;
-                     i < pos;
-                     i++)
+                for (int i = cursor_pos - 1; i < pos; i++)
                 {
                     input[i] = input[i + 1];
                 }

@@ -39,8 +39,9 @@ bash cat file.txt | grep hello | wc
 ### Background Processes
 
 Run commands in the background using &
-
-bash sleep 30 &
+```bash
+sleep 30 &
+```
 
 ### Process Management
 
@@ -53,7 +54,9 @@ bash sleep 30 &
 - Stores command history during shell execution
 - View history using:
 
-bash history
+```bash 
+history
+```
 
 ### Interactive Line Editor
 
@@ -91,11 +94,11 @@ Implemented without GNU Readline.
 
 Examples:
 
-bash cat te<TAB>
+```bash
+cat te<TAB>
 
-bash cd Doc<TAB>
-
----
+cd Doc<TAB>
+```
 
 ## Architecture
 
@@ -186,15 +189,17 @@ execute_command()
 
 ## Build
 
-bash make
+```bash
+make
+```
 
 ---
 
 ## Run
 
-bash ./shell
-
----
+```bash 
+./shell
+```
 
 ## Example Session
 
