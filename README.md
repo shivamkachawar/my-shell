@@ -96,7 +96,8 @@ Examples:
 
 ```bash
 cat te<TAB>
-
+```
+```bash
 cd Doc<TAB>
 ```
 
